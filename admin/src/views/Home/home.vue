@@ -21,7 +21,7 @@
                     <el-carousel-item v-for="item in loopList" :key="item._id">
                         <div 
                         :style="{
-                            backgroundImage: `url(http://${config.serverHost}:${config.serverPort}${item.cover})`,
+                            backgroundImage: `url(http://${escconfig.serverHost}:${escconfig.serverPort}${item.cover})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             height: '100%',
@@ -56,13 +56,16 @@
 import axios  from 'axios';
 import { useStore } from 'vuex';
 import { computed ,onMounted,ref} from 'vue';
-import {escconfig } from '@/config/esc.config';
+import escconfig from '@/config/esc.config';
 
 
 const loopList = ref([])
 const store = useStore()
 // console.log(store.state)
-const avatarUrl = computed(()=>store.state.userInfo.avatar?`http://${escconfig.serverHost}:${escconfig.serverPort}` + store.state.userInfo.avatar:`https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`)
+const avatarUrl = computed(() => store.state.userInfo.avatar 
+    ? `http://${escconfig.serverHost}:${escconfig.serverPort}${store.state.userInfo.avatar}`
+    : `https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`
+);
 
 onMounted(() => {
     getTableData()//挂载时候就加载数据

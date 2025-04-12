@@ -1,5 +1,6 @@
-const { defineConfig } = require('@vue/cli-service')
-const { escconfig } = require('@/config/esc.config');
+const { defineConfig } = require('@vue/cli-service');
+const  escconfig  = require('./src/config/esc.config');
+
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {

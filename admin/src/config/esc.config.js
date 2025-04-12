@@ -1,5 +1,5 @@
 //服务器配置
-export const escconfig = {
+module.exports = {
     serverHost: "localhost",
     serverPort: 3001
-  };
+};  
