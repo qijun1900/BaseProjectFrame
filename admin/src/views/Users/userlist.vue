@@ -89,7 +89,7 @@
 <script setup>
 import { ref, onMounted ,reactive} from 'vue';
 import axios from 'axios';
-import {escconfig } from '@/config/esc.config';
+import escconfig  from '@/config/esc.config';
 
 
 

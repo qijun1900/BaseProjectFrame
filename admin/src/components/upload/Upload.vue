@@ -16,7 +16,7 @@
 <script setup>
 import { defineEmits, defineProps, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
-import {escconfig } from '@/config/esc.config';
+import escconfig  from '@/config/esc.config';
 
 const props = defineProps({
   avatar: String,
