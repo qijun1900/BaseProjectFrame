@@ -71,7 +71,6 @@ const checkPermission = (item)=>{
     return store.state.userInfo.role === 1  
   } 
   return true
-
 }
 
 
