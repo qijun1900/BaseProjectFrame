@@ -12,7 +12,7 @@ const routes = [
   },
   {
     path: '/mainbox',
-    name: 'main',
+    name: 'mainbox',
     component: Main,
   }
 
