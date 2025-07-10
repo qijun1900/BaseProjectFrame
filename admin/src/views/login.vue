@@ -69,7 +69,6 @@
     //3.设置token
     loginFormRef.value.validate((valid)=>{
       if(valid){
-        localStorage.setItem("token","qijun");
         axios.post("/adminapi/user/login",loginForm).then(res=>{
           console.log(res.data)
           if(res.data.ActionType ==="OK"){
