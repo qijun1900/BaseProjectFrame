@@ -20,7 +20,7 @@ const routes= [
     {
         path: '/user/adduser',
         component: UserAdd,
-        requireAdmin: true,
+        // requireAdmin: true,
     },
     {
         path:'/user/userlist',
@@ -29,7 +29,6 @@ const routes= [
     {
         path:'/news/addnews',
         component: NewsAdd,
-
     },
     {
         path:'/news/newslist',

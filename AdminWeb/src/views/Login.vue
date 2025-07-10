@@ -1,6 +1,16 @@
 <template>
     <div class="login-container">
+        <div class="bg-animation">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+        </div>
+        
         <div class="login-box">
+            <div class="logo-container">
+                <img src="@/assets/logo.png" alt="Logo" class="logo">
+            </div>
             <h2 class="login-title">
                 <el-icon class="title-icon"><UserFilled /></el-icon>
                 欢迎登录
@@ -47,17 +57,16 @@
 </template>
 
 <script setup>
-// 在原有import基础上新增图标引入
 import { UserFilled, User, Lock, Pointer } from '@element-plus/icons-vue';
 import { reactive, ref } from "vue";
 import { ElMessage } from 'element-plus'
-// import { useAppStore } from '../stores/index'
+import { useAppStore } from '../stores/index'
 import { postUserLogin } from "@/API/Login/postUserLogin";
 import RouterPush from "@/util/RouterPush";
 
 
 
-// const appStore = useAppStore()
+const appStore = useAppStore()
 
 const loginForm = reactive({
     username: "",
@@ -88,11 +97,18 @@ const submitForm = ()=>{
     try{
         loginFormRef.value.validate(async (valid)=>{
             if(valid){
-                //1.调用登录接口
                 const res = await postUserLogin(loginForm)
-                console.log(res.data)
                 if(res.ActionType ==="OK"){
-                    console.log("登录成功")
+                    // 添加控制台日志验证数据结构
+                    console.log('登录返回数据:', res.data)
+                    
+                    appStore.changeUserInfo({
+                        ...res.data,
+                        role: res.data.role 
+                    })
+                    appStore.ChangesGetterRouter(true)
+                    
+                    ElMessage.success("用户登录成功！")
                     RouterPush("/mainbox")
                 }else{
                     ElMessage.error("用户名或密码错误！！！")
@@ -102,7 +118,6 @@ const submitForm = ()=>{
     }catch(e){
         console.error("登录失败", e)
     }
-        
 }
 </script>
 
@@ -112,12 +127,92 @@ const submitForm = ()=>{
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(135deg, #388eff, #0466f9);
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    position: relative;
+    overflow: hidden;
 }
 
+/* 背景动画效果 */
+.bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.ball {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,142,255,0.2) 0%, rgba(4,102,249,0.1) 70%, transparent 100%);
+    filter: blur(30px);
+    animation: float 15s infinite linear;
+}
+
+.ball:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.ball:nth-child(2) {
+    top: 60%;
+    left: 70%;
+    animation-delay: 3s;
+}
+
+.ball:nth-child(3) {
+    top: 30%;
+    left: 50%;
+    animation-delay: 6s;
+}
+
+.ball:nth-child(4) {
+    top: 80%;
+    left: 30%;
+    animation-delay: 9s;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(50px, 50px) rotate(90deg);
+    }
+    50% {
+        transform: translate(100px, -50px) rotate(180deg);
+    }
+    75% {
+        transform: translate(-50px, -100px) rotate(270deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg);
+    }
+}
+
+/* Logo样式 */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* 调整登录框层级 */
 .login-box {
+    position: relative;
+    z-index: 2;
     background: rgba(255, 255, 255, 0.95);
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     width: 100%;
@@ -127,7 +222,7 @@ const submitForm = ()=>{
 
 .login-title {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     font-size: 1.8rem;
     color: #2c3e50;
     display: flex;

@@ -16,7 +16,8 @@ export const useAppStore = defineStore('app', () => {
             isCollapse.value = !isCollapse.value;
         },
         changeUserInfo(value) {
-            userInfo.value = { ...userInfo.value, ...value };
+            // 使用 Object.assign 确保响应式更新
+            userInfo.value = Object.assign({}, userInfo.value, value);
         },
         clearUserInfo() {
             userInfo.value = {};

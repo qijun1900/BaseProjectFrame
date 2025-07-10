@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/Login.vue' 
-import Main from '@/views/Mainbox.vue'
+import Mainbox from '@/views/Mainbox.vue'
 import RoutesConfig from './config'
-import { useAppStore } from '../stores/index'
-
+import { useAppStore } from '../stores/index'  
 const routes = [
   {
     path: '/login',
@@ -13,8 +12,8 @@ const routes = [
   {
     path: '/mainbox',
     name: 'mainbox',
-    component: Main,
-  }
+    component: Mainbox,
+  },
 
 ]
 
@@ -24,8 +23,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // 获取store实例
-  const appStore = useAppStore()
+  const appStore = useAppStore() 
   
   if (to.name === 'login') {
     next()
@@ -33,7 +31,6 @@ router.beforeEach((to, from, next) => {
     if (!localStorage.getItem("token")) {
       next({ path: '/login' })
     } else {
-      // 修改state访问方式
       if (!appStore.isGetterRouter) {  
         router.removeRoute('mainbox')
         configrouter()
@@ -46,35 +43,31 @@ router.beforeEach((to, from, next) => {
 })
 
 const configrouter = () => {
-  // 获取store实例
-  const appStore = useAppStore()
+  const appStore = useAppStore() 
   
   if(!router.hasRoute('mainbox')){
     router.addRoute(
       {
         path: '/mainbox',
         name: 'mainbox',
-        component: Main,
+        component: Mainbox,
       }
     )
   }
   RoutesConfig.forEach(item=>{
-    checkPermission(item) && router.addRoute('mainbox',item)
+    // checkPermission(item) &&
+     router.addRoute('mainbox',item)
     })
 
-  // 修改action调用方式
-  appStore.ChangesGetterRouter(true)
+  appStore.ChangesGetterRouter(true) 
 }
-
-const checkPermission = (item) => {
-  // 获取store实例
-  const appStore = useAppStore()
+// const checkPermission = (item) => {
+//   const appStore = useAppStore() 
   
-  if (item.requireAdmin) {
-    // 修改state访问方式
-    return appStore.userInfo.role === 1
-  }
-  return true
-}
+//   if (item.requireAdmin) {
+//     return appStore.userInfo.role === 1  
+//   }
+//   return true
+// }
 
 export default router

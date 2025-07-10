@@ -1,13 +1,11 @@
 <template>
     <el-header>
         <div class="left">
-            <el-icon :size="25" @click="handleCollapse">
-                <Menu />
-            </el-icon>
-            <span>XXX管理系统</span>
+            <el-icon :size="25" @click="handleCollapse"><Menu /></el-icon>
+            <span>XXX后台管理系统</span>
         </div>
         <div class="right">
-            <span>欢迎 {{ store.state.userInfo.username }} 回来</span>
+            <span>欢迎 {{ appStore.userInfo.username }} 回来</span>
             <el-dropdown :hide-on-click="false">
                 <span class="el-dropdown-link">
                     <el-icon :size="30">
@@ -24,16 +22,19 @@
         </div>
     </el-header>
 </template>
+
 <script setup>
-import { useStore } from 'vuex';
+// 修改导入方式
+import { useAppStore } from '@/stores/index';
 import { Menu, User } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 
-const store = useStore()
 const router = useRouter()
+const appStore = useAppStore() // 使用Pinia store
 
+// 修改方法调用方式
 const handleCollapse = () => {
-    store.commit("changeCollapse")
+    appStore.changeCollapse()
 }
 
 const handleCenter = () => {
@@ -42,14 +43,14 @@ const handleCenter = () => {
 
 const handleLogout = () => {
     localStorage.removeItem("token")
-    store.commit("clearUserInfo")
+    appStore.clearUserInfo() 
     router.push('/login')
 }
 
 </script>
 <style scoped>
 .el-header {
-    background-color: rgba(118, 120, 122, 0.769);
+    background-color: rgba(171, 212, 254, 0.769);
     width: 100%;
     height: 60px;
     line-height: 60px;
@@ -57,8 +58,6 @@ const handleLogout = () => {
     justify-content: space-between;
     /*两端对齐*/
     align-items: center;
-
-
 }
 
 .right,
