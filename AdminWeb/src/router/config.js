@@ -1,9 +1,9 @@
 import Home from "@/views/Home/Home.vue"
 import Center from "@/views/Center/Center.vue"
-import UserAdd from "@/views/Users/UserAdd.vue"
-import UserList from "@/views/Users/UserList.vue"
-import NewsAdd from "@/views/News/NewsAdd.vue"
-import NewsList from "@/views/News/NewsList.vue"
+import Users  from "@/views/Users/Users.vue"    
+import News from "@/views/News/News.vue"
+import NotFound from "@/views/NotFound/NotFound.vue"
+
 const routes= [
     {
         path:'/' ,
@@ -18,23 +18,18 @@ const routes= [
         component: Center,
     } ,
     {
-        path: '/user/adduser',
-        component: UserAdd,
-        requireAdmin: true,
+        path: '/users',
+        component: Users,
     },
     {
-        path:'/user/userlist',
-        component: UserList,
+        path: '/news',
+        component: News,
     },
     {
-        path:'/news/addnews',
-        component: NewsAdd,
-    },
-    {
-        path:'/news/newslist',
-        component: NewsList,
+        path:'/:patchMatch(.*)*',
+        name:"NotFound",
+        component:NotFound
     },
 
 ]
-
 export default routes

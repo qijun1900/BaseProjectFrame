@@ -102,7 +102,7 @@ const submitForm = ()=>{
                         ...res.data,
                     })
                     ElMessage.success("用户登录成功！")
-                    RouterPush("/mainbox")
+                    RouterPush("/index")
                 }else{
                     ElMessage.error("用户名或密码错误！！！")
                 }
@@ -191,7 +191,7 @@ const submitForm = ()=>{
 .logo-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.1rem;
 }
 
 .logo {

@@ -1,7 +1,13 @@
 <template>
     <el-header>
         <div class="left">
-            <el-icon :size="25" @click="handleCollapse"><Menu/></el-icon>
+            <el-space :size="10" spacer="|">
+            <el-icon :size="25" @click="handleCollapse">
+                <Expand v-if="appStore.isCollapse" />
+                <Fold v-else />
+            </el-icon>
+            <PageHeader/>
+            </el-space>
         </div>
         <div class="right">
             <span>欢迎 {{ appStore.userInfo.username }} 回来</span>
@@ -24,8 +30,9 @@
 
 <script setup>
 import { useAppStore } from '@/stores/index';
-import { Menu, User } from '@element-plus/icons-vue';
+import { User, Expand, Fold } from '@element-plus/icons-vue'; // 添加 Expand 和 Fold 图标
 import { useRouter } from 'vue-router';
+import PageHeader from '../FunComponents/PageHeader.vue';
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -47,19 +54,21 @@ const handleLogout = () => {
 </script>
 <style scoped>
 .el-header {
-    background-color: rgba(171, 212, 254, 0.769);
+    background-color: rgba(216, 235, 255, 0.769);
     width: 100%;
-    height: 60px;
-    line-height: 60px;
+    height: 50px;
+    line-height: 50px;
     display: flex;
     justify-content: space-between;
-    /*两端对齐*/
     align-items: center;
 }
 
-.right,
+.right{
+    display: flex;
+}
 .left {
     display: flex;
+    
 
 }
 
