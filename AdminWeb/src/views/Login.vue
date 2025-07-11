@@ -65,7 +65,6 @@ import { postUserLogin } from "@/API/Login/postUserLogin";
 import RouterPush from "@/util/RouterPush";
 
 
-
 const appStore = useAppStore()
 
 const loginForm = reactive({
@@ -98,16 +97,10 @@ const submitForm = ()=>{
         loginFormRef.value.validate(async (valid)=>{
             if(valid){
                 const res = await postUserLogin(loginForm)
-                if(res.ActionType ==="OK"){
-                    // 添加控制台日志验证数据结构
-                    console.log('登录返回数据:', res.data)
-                    
+                if(res.ActionType ==="OK"){                 
                     appStore.changeUserInfo({
                         ...res.data,
-                        role: res.data.role 
                     })
-                    appStore.ChangesGetterRouter(true)
-                    
                     ElMessage.success("用户登录成功！")
                     RouterPush("/mainbox")
                 }else{

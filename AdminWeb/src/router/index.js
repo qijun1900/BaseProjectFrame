@@ -3,6 +3,8 @@ import Login from '@/views/Login.vue'
 import Mainbox from '@/views/Mainbox.vue'
 import RoutesConfig from './config'
 import { useAppStore } from '../stores/index'  
+import store from '../stores/vuex'
+
 const routes = [
   {
     path: '/login',
@@ -22,52 +24,54 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const appStore = useAppStore() 
-  
-  if (to.name === 'login') {
+router.beforeEach((to,from,next)=>{
+  if(to.name==='login'){
     next()
-  } else {
-    if (!localStorage.getItem("token")) {
-      next({ path: '/login' })
-    } else {
-      if (!appStore.isGetterRouter) {  
+  }else{
+    if(!localStorage.getItem("token")){
+      next({
+        path:'/login',    
+      })
+    }else{
+      if(!store.state.isGetterRouter){
         router.removeRoute('mainbox')
         configrouter()
-        next({ path: to.fullPath })
-      } else {
+        next({
+          path:to.fullPath
+        })
+      }else{
         next()
       }
     }
   }
+
 })
 
-const configrouter = () => {
-  const appStore = useAppStore() 
-  
+const configrouter = ()=>{
   if(!router.hasRoute('mainbox')){
     router.addRoute(
       {
         path: '/mainbox',
         name: 'mainbox',
-        component: Mainbox,
+        component:Mainbox
+    
       }
     )
   }
   RoutesConfig.forEach(item=>{
-    // checkPermission(item) &&
-     router.addRoute('mainbox',item)
+    checkPermission(item) && router.addRoute('mainbox',item)
     })
-
-  appStore.ChangesGetterRouter(true) 
+  store.commit('ChangesGetterRouter',true) 
 }
-// const checkPermission = (item) => {
-//   const appStore = useAppStore() 
-  
-//   if (item.requireAdmin) {
-//     return appStore.userInfo.role === 1  
-//   }
-//   return true
-// }
+
+const checkPermission = (item)=>{
+    const appStore = useAppStore()
+  if(item.requireAdmin){
+    return appStore.userInfo.role === 1
+  } 
+  return true
+}
+
+
 
 export default router

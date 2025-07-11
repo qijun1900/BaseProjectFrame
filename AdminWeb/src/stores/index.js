@@ -3,15 +3,11 @@ import { ref } from 'vue';
 
 export const useAppStore = defineStore('app', () => {
     // 状态定义
-    const isGetterRouter = ref(false);
     const isCollapse = ref(false);
     const userInfo = ref({});
-
-    // Actions 替代原来的 mutations
+    
+    //action    
     const actions = {
-        ChangesGetterRouter(value) {
-            isGetterRouter.value = value;
-        },
         changeCollapse() {
             isCollapse.value = !isCollapse.value;
         },
@@ -25,13 +21,13 @@ export const useAppStore = defineStore('app', () => {
     };
 
     return { 
-        isGetterRouter,
         isCollapse,
         userInfo,
         ...actions 
     };
 }, {
     persist: {
-        paths: ['isCollapse', 'userInfo'],
+        persist: true,
+        paths: ['isCollapse', 'userInfo',],
     }
 });

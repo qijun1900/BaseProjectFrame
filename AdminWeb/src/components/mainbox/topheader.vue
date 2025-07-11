@@ -1,8 +1,7 @@
 <template>
     <el-header>
         <div class="left">
-            <el-icon :size="25" @click="handleCollapse"><Menu /></el-icon>
-            <span>XXX后台管理系统</span>
+            <el-icon :size="25" @click="handleCollapse"><Menu/></el-icon>
         </div>
         <div class="right">
             <span>欢迎 {{ appStore.userInfo.username }} 回来</span>
@@ -24,15 +23,13 @@
 </template>
 
 <script setup>
-// 修改导入方式
 import { useAppStore } from '@/stores/index';
 import { Menu, User } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const appStore = useAppStore() // 使用Pinia store
+const appStore = useAppStore()
 
-// 修改方法调用方式
 const handleCollapse = () => {
     appStore.changeCollapse()
 }

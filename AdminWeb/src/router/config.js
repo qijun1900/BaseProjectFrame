@@ -20,7 +20,7 @@ const routes= [
     {
         path: '/user/adduser',
         component: UserAdd,
-        // requireAdmin: true,
+        requireAdmin: true,
     },
     {
         path:'/user/userlist',
