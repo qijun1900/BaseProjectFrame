@@ -112,6 +112,17 @@
                                 {{ scope.row.name }}
                             </template>
                         </el-table-column>
+                        <el-table-column label="头像" width="100">
+                            <template #default="scope">
+                                <div v-if="scope.row.avatar">
+                                    <el-avatar :size="50" :src=" `http://${escconfig.serverHost}:${escconfig.serverPort}` + scope.row.avatar"></el-avatar>
+                                </div>
+                                <div v-else>
+                                    <el-avatar :size="50"
+                                        :src="'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
+                                </div>
+                            </template>
+                        </el-table-column>
                         <el-table-column  label="简介" width="250" >
                             <template #default="scope">
                                 {{ scope.row.address }}
@@ -170,16 +181,70 @@
                 </div>
             </el-card>
         </div>
+        <div>
+            <AddDialog
+                DilogTitle="添加用户"
+                DilogWidth="700px" 
+                v-model="dialogVisible"  
+                @dialog-confirm="handleConfirmAddUser">
+                <template #dialogcontent>
+                  <el-form ref="userFormRef" 
+                        :model="userForm" 
+                        :rules="userFormrules">
+                        <el-form-item label="用户名" prop="username">
+                            <el-input v-model="userForm.username" />
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                            <el-input v-model="userForm.password" type="password"/>
+                        </el-form-item>
+                         <el-form-item label="角色" prop="role">
+                            <el-select
+                                v-model="userForm.role"
+                                placeholder="Select">
+                                <el-option
+                                v-for="item in roleOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"/>
+                            </el-select>
+                         </el-form-item>
+                        <el-form-item label="性别" prop="gender">
+                            <el-select
+                                v-model="userForm.gender"
+                                placeholder="Select">
+                                <el-option
+                                v-for="item in genderOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="个人简介" prop="introduction">
+                            <el-input v-model="userForm.introduction" type="textarea"/>
+                        </el-form-item>
+                        <el-form-item 
+                        label="个人头像" 
+                        prop="avatar">
+                        <Upload 
+                        :avatar='userForm.avatar'
+                        @AvatarChange="handleChange"/>   
+                </el-form-item>
+                    </el-form>
+                </template>
+            </AddDialog>
+        </div>
     </div>
 </template>
 <script setup>
-// import { ref } from 'vue'
+import { ref ,reactive} from 'vue'
 import { Search, RefreshRight, CloseBold, Hide ,Open} from '@element-plus/icons-vue' 
 import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
 import { useTableState ,useSearchUserFilters} from '@/composables/State/useTableState'
 import { useTableActions } from '@/composables/Action/useTableActions'
-
+import escconfig from '../../config/esc.config';
+import AddDialog from '@/components/FunComponents/AddDialog .vue'
+import Upload from '@/components/upload/Upload.vue';
 
 //tableData数据
 const tableData = [
@@ -328,17 +393,107 @@ const tableData = [
     status: 1
   }
 ];
-
+// 对话框状态
+const dialogVisible = ref(false)
 // UI 状态与方法管理
 const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTableState()
 // 搜索条件管理
 const { input1, input2, input3 } = useSearchUserFilters()
 // 表格数据与方法管理
 const { selectedRows, handleSelectionChange, handleDelete,handleRefresh } = useTableActions()
-
-
 // 复用通用删除逻辑
 const handleDeleteChooseUser = () => handleDelete(selectedRows.value)
+
+const userFormRef = ref()
+const userForm = reactive({
+    username:"",
+    password:"",
+    role:2,//1超级管理员，2编辑
+    introduction:"",
+    avatar:"",
+    file:null,
+    gender:0
+})
+const userFormrules = reactive({
+    username: [
+        { 
+        required: true,
+        message: '请输入名字', 
+        trigger: 'blur'    
+        }
+    ],
+    password: [
+        { 
+        required: true,
+        message: '请输入密码', 
+        trigger: 'blur'    
+        }
+    ],
+    role: [
+        { 
+        required: true,
+        message: '请设置权限', 
+        trigger: 'blur'    
+        }
+    ],
+    introduction: [
+        { 
+        required: true,
+        message: '请输入介绍', 
+        trigger: 'blur'    
+        }
+    ],
+    avatar: [
+        { 
+        required: true,
+        message: '请上传头像', 
+        trigger: 'blur'    
+        }
+    ],
+})
+//头像上传
+const handleChange = (file)=>{
+    userForm.avatar = URL.createObjectURL(file)
+    userForm.file = file
+}
+//角色字段
+const roleOptions =[
+    { label: '管理员', value: 1 },
+    { label: '编辑', value: 2 }
+]
+//性别字段
+const genderOptions =[
+    { label: '保密', value: 0 },
+    { label: '男', value: 1 },
+    { label: '女', value: 2 }
+]
+//业务逻辑
+//增加用户,出现对话框
+const handleAddUser = ()=>{
+    dialogVisible.value = true;
+}
+//确认增加用户
+const handleConfirmAddUser = ()=>{
+    dialogVisible.value = false;
+    console.log(userForm)
+    // 重置表单数据
+    Object.assign(userForm, {
+        username: "",
+        password: "",
+        role: 2,
+        introduction: "",
+        avatar: "",
+        file: null,
+        gender: 0
+    });
+}
+
+
+
+const handleExportUser = ()=>{
+
+}
+
 
 </script>
 

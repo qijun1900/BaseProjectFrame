@@ -37,7 +37,11 @@
                             <span>个人信息</span>
                         </div>
                     </template>
-                    <el-form ref="userFormRef" :model="userForm" :rules="userFormrules" label-width="100px"
+                    <el-form 
+                        ref="userFormRef" 
+                        :model="userForm" 
+                        :rules="userFormrules" 
+                        label-width="100px"
                         class="demo-ruleForm">
                         <el-form-item label="用户名" prop="username">
                             <el-input v-model="userForm.username" />
@@ -78,7 +82,6 @@ const appStore = useAppStore()
 
 const avatarUrl = computed(() => appStore.userInfo.avatar ? `http://${escconfig.serverHost}:${escconfig.serverPort}` + appStore.userInfo.avatar : `https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`)
 const { username, gender, introduction, avatar } = appStore.userInfo
-console.log()
 const userFormRef = ref(username, gender, introduction, avatar)
 const userFormrules = reactive({
     username: [
