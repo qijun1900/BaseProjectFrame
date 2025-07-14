@@ -163,7 +163,6 @@
 import { Search, RefreshRight, CloseBold, Hide ,Open} from '@element-plus/icons-vue' 
 import { useTableState ,useSearchUserFilters} from '@/composables/State/useTableState'
 import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
-import { useNewsActions } from '@/composables/Action/useNewsAction';
 import { useTableActions } from '@/composables/Action/useTableActions'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
 
@@ -219,12 +218,6 @@ const { input1, input2, input3 } = useSearchUserFilters()
 const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTableState()
 // 表格数据与方法管理
 const { selectedRows, handleSelectionChange, handleDelete,handleRefresh } = useTableActions()
-// 操作方法管理,业务特定逻辑
-const {
-    handleAddNews,
-    handleEdit,
-    handleMore
-}= useNewsActions()
 
 
 // 复用通用删除逻辑

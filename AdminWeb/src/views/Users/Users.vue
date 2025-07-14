@@ -179,7 +179,8 @@ import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
 import { useTableState ,useSearchUserFilters} from '@/composables/State/useTableState'
 import { useTableActions } from '@/composables/Action/useTableActions'
-import { useUserActions } from '@/composables/Action/useUserActions'
+
+
 //tableData数据
 const tableData = [
   {
@@ -334,13 +335,7 @@ const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTabl
 const { input1, input2, input3 } = useSearchUserFilters()
 // 表格数据与方法管理
 const { selectedRows, handleSelectionChange, handleDelete,handleRefresh } = useTableActions()
-// 用户管理方法,业务特定逻辑
-const { 
-    handleAddUser,
-    handleExportUser,
-    handleEdit,
-    handleMore 
-} = useUserActions()
+
 
 // 复用通用删除逻辑
 const handleDeleteChooseUser = () => handleDelete(selectedRows.value)
