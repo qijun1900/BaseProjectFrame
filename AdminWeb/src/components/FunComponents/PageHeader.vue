@@ -22,10 +22,8 @@ const Title = computed(() => {
       return '个人中心';
     case '/users':
       return '用户管理';
-    case '/news':
+    case '/news/notice':
       return '通知公告';
-    case '/news/newslist':
-      return '信息列表';
     default:
       return '后台管理系统';
   }

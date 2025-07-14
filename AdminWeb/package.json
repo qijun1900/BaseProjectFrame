@@ -10,6 +10,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@wangeditor/editor": "^5.1.23",
     "animate.css": "^4.1.1",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",

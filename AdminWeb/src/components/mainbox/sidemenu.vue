@@ -42,7 +42,7 @@
           </el-icon>
           <span>信息管理</span>
         </template>
-        <el-menu-item index="/news">通知公告</el-menu-item>
+        <el-menu-item index="/news/notice">通知公告</el-menu-item>
         <!-- <el-menu-item index="/news/newslist">信息列表</el-menu-item> -->
       </el-sub-menu>
     </el-menu>

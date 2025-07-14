@@ -88,13 +88,11 @@
                                         type="primary" 
                                         :icon="RefreshRight" 
                                         circle 
-                                        @click="handleRefreshTable" />
+                                        @click="handleRefresh" />
                                 </template>
                             </Tooltip>
                         </el-col> 
                     </el-row>
-
-                    
                 </div>
                 <div class="edit-table">
                     <el-table 
@@ -138,7 +136,7 @@
                                 <el-tag v-else type="danger" round>禁用</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="时间" width="150" >
+                        <el-table-column  label="创建时间" width="150" >
                             <template #default="scope">
                                 {{ scope.row.date }}
                             </template>
@@ -171,24 +169,18 @@
                     <Pagination/>
                 </div>
             </el-card>
-           
         </div>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import { Search, RefreshRight, CloseBold, Hide ,Open} from '@element-plus/icons-vue' 
 import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
-
-const showSearch = ref(true)
-const IsOpenStripe = ref(false)
-const input1 = ref('')
-const input2 = ref('')
-const input3 = ref('')
-// 新增表格引用和选中数据
-const selectedRows = ref([])
-// 更新后的tableData数据
+import { useTableState ,useSearchUserFilters} from '@/composables/State/useTableState'
+import { useTableActions } from '@/composables/Action/useTableActions'
+import { useUserActions } from '@/composables/Action/useUserActions'
+//tableData数据
 const tableData = [
   {
     date: '2016-05-03',
@@ -334,57 +326,24 @@ const tableData = [
     role: 2,
     status: 1
   }
-]
+];
 
+// UI 状态与方法管理
+const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTableState()
+// 搜索条件管理
+const { input1, input2, input3 } = useSearchUserFilters()
+// 表格数据与方法管理
+const { selectedRows, handleSelectionChange, handleDelete,handleRefresh } = useTableActions()
+// 用户管理方法,业务特定逻辑
+const { 
+    handleAddUser,
+    handleExportUser,
+    handleEdit,
+    handleMore 
+} = useUserActions()
 
-//是否开启斑马纹
-const handleOpenStripe = () => {
-    IsOpenStripe.value = !IsOpenStripe.value
-}
-//刷新表格
-const HandleHideSearch = () => {
-    showSearch.value = !showSearch.value
-}
-//刷新表格
-const handleRefreshTable = () => {
-    // 这里可以添加刷新表格的逻辑，例如重新获取数据
-    console.log('刷新表格')
-}
-
-// 新增用户
-const handleAddUser = () => {
-    console.log('新增用户')
-}
-// 删除选择用户
-const handleDeleteChooseUser = () => {
-    console.log('删除用户')
-}
-// 导出用户
-const handleExportUser = () => {
-    console.log('编辑用户')
-}
-
-//编辑用户
-const handleEdit = (row) => {
-    console.log('编辑用户', row)
-}
-//删除表格用户
-const handleDelete = (row) => {
-    console.log('删除用户', row)
-}
-
-//handleMore
-const handleMore = (row) => {
-    console.log('更多操作', row)
-}
-
-
-
-// 处理选中事件
-const handleSelectionChange = (val) => {
-    selectedRows.value = val
-    console.log(val)
-}
+// 复用通用删除逻辑
+const handleDeleteChooseUser = () => handleDelete(selectedRows.value)
 
 </script>
 
