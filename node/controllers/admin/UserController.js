@@ -45,7 +45,7 @@ const UserController = {
         })
         if(avatar){
             res.send({
-                ActionType:"OK_更新完毕",
+                ActionType:"OK",
                 data:{
                     username,
                     introduction,
@@ -55,7 +55,7 @@ const UserController = {
             })
         }else{
             res.send({
-                ActionType:"OK_更新完毕",
+                ActionType:"OK",
                 data:{
                     username,
                     introduction,

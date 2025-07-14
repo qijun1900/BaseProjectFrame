@@ -144,7 +144,7 @@ const submitForm  =()=>{
     userFormRef.value.validate(async (valid)=>{
         if(valid){
             const res = await upload("/adminapi/user/upload",userForm)
-            if(res.ActionType==="OK_更新完毕"){
+            if(res.ActionType==="OK"){
                 store.commit("changeUserInfo",res.data)
                 ElMessage.success("更新完毕")
             }
