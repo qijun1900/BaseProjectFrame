@@ -34,26 +34,45 @@
                 <div class="edit-btn">
                     <el-row :gutter="200">
                         <el-col :span="18">
-                            <el-button type="success" plain @click="handleAddUser">新建用户</el-button>
-                            <el-button type="danger" plain :disabled="!selectedRows || selectedRows.length === 0"
+                            <el-button 
+                                type="success" 
+                                plain 
+                                @click="handleAddUser">新建用户</el-button>
+                            <el-button type="danger" 
+                                plain 
+                                :disabled="!selectedRows || selectedRows.length === 0"
                                 @click="handleDeleteChooseUser">删除用户</el-button>
-                            <el-button type="warning" plain :disabled="!selectedRows || selectedRows.length === 0"
+                            <el-button 
+                                type="warning" 
+                                plain 
+                                :disabled="!selectedRows || selectedRows.length === 0"
                                 @click="handleExportUser">导出用户</el-button>
                         </el-col>
                         <el-col :span="6">
                             <Tooltip content="隐藏搜索">
                                 <template #description>
-                                    <el-button type="primary" :icon="Hide" circle @click="HandleHideSearch" />
+                                    <el-button 
+                                        type="primary" 
+                                        :icon="Hide" 
+                                        circle 
+                                        @click="HandleHideSearch" />
                                 </template>
                             </Tooltip>
                             <Tooltip content="开启/关闭斑马纹">
                                 <template #description>
-                                    <el-button type="primary" :icon="Open" circle @click="handleOpenStripe" />
+                                    <el-button 
+                                        type="primary" 
+                                        :icon="Open" 
+                                        circle 
+                                        @click="handleOpenStripe" />
                                 </template>
                             </Tooltip>
                             <Tooltip content="刷新表格">
                                 <template #description>
-                                    <el-button type="primary" :icon="RefreshRight" circle
+                                    <el-button 
+                                        type="primary" 
+                                        :icon="RefreshRight" 
+                                        circle
                                         @click="handleRefreshUserData" />
                                 </template>
                             </Tooltip>
@@ -61,10 +80,18 @@
                     </el-row>
                 </div>
                 <div class="edit-table">
-                    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
-                        max-height="690" :stripe="IsOpenStripe">
+                    <el-table 
+                        :data="tableData" 
+                        style="width: 100%" 
+                        @selection-change="handleSelectionChange"
+                        max-height="690" 
+                        :stripe="IsOpenStripe">
                         <el-table-column type="selection" width="55" />
-                        <el-table-column type="index" label="序号" width="70" :index="(index) => index + 1" />
+                        <el-table-column 
+                            type="index" 
+                            label="序号" 
+                            width="70" 
+                            :index="(index) => index + 1" />
                         <el-table-column label="名称" width="100">
                             <template #default="scope">
                                 {{ scope.row.username }}
@@ -113,15 +140,25 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template #default="scope">
-                                <el-button type="primary" plain @click="handleEdit(scope.row)">
+                                <el-button 
+                                    type="primary" 
+                                    plain 
+                                    @click="handleEdit(scope.row)">
                                     编辑
                                 </el-button>
-                                <Popconfirm title="您确定删除吗？" @confirm="handleDeleteOne(scope.row)">
-                                    <el-button type="danger" plain>
+                                <Popconfirm 
+                                    title="您确定删除吗？" 
+                                    @confirm="handleDeleteOne(scope.row)">
+                                    <el-button 
+                                        type="danger" 
+                                        plain>
                                         删除
                                     </el-button>
                                 </Popconfirm>
-                                <el-button type="info" plain @click="handleMore(scope.row)">
+                                <el-button 
+                                    type="info" 
+                                    plain 
+                                    @click="handleMore(scope.row)">
                                     更多
                                 </el-button>
                             </template>
@@ -312,7 +349,7 @@ const handleEdit = (row) => {
 const handleAddUser = () => {
     dialogVisible.value = true;
 }
-// 修改确认方法，区分添加和编辑
+// 修改确认方法，区分添加和编辑,提交表单数据
 const handleConfirmUser = async () => {
     dialogVisible.value = false
     try {
