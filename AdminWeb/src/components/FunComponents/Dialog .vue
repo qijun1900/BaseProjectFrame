@@ -13,7 +13,7 @@
         <el-button 
           type="primary" 
           @click="handleConfirm">
-          添加
+          {{ props.DilogTitle }}
         </el-button>
       </div>
     </template>
@@ -50,7 +50,6 @@ watch(dialogVisible, (val) => {
 const handleConfirm = () => {
   emit('dialogConfirm')
   dialogVisible.value = false
-  console.log('点击了确定')
 }
 
 

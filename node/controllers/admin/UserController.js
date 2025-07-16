@@ -1,5 +1,6 @@
 const UserService = require("../../services/admin/UserService");
-const JWT = require("../../MiddleWares/jwt")
+const JWT = require("../../MiddleWares/jwt");
+const { param } = require("../../routes/admin/UserRouter");
 
 const UserController = {
     login: async (req, res) => {
@@ -65,8 +66,9 @@ const UserController = {
         }
     },
     add:async (req,res)=>{
-        const {username,introduction,gender,role,password} = req.body
+        const {username,introduction,gender,role,password,state} = req.body
         const avatar = req.file ? `/avataruploads/${req.file.filename}`:""
+        console.log(avatar)
        await UserService.add({
             username,
             introduction,
@@ -74,21 +76,23 @@ const UserController = {
             avatar,
             role:Number(role),
             password,
+            state:Number(state),
+            createTime:Date.now()
         })
         res.send({
-            ActionType:"OK"
+            ActionType:"OK",
         })
     },
     getList:async (req,res)=>{
         const result = await UserService.getlist(req.params)
         res.send({
-
             ActionType:"OK",  
             data:result
         })
     },
-    delList:async (req,res)=>{
-        const result = await UserService.dellist({_id:req.params.id})
+    delListOneUser:async (req,res)=>{
+        const {_id} = req.body
+        const result = await UserService.dellist({_id})
         res.send({
             ActionType:"OK",  
         })
@@ -101,5 +105,29 @@ const UserController = {
         })
 
     },
+    delListManyUser:async (req,res)=>{
+        const {_ids} = req.body
+        console.log(_ids)
+        const result = await UserService.delManylist({_ids})
+        res.send({
+            ActionType:"OK",
+        })
+    },
+    editUser:async (req,res)=>{
+        const {_id,username,introduction,gender,role,state} = req.body
+        const avatar = req.file ? `/avataruploads/${req.file.filename}`:""
+        const result = await UserService.editUser({
+            _id,
+            username,
+            introduction,
+            gender,
+            role,
+            state,
+            avatar
+        })
+        res.send({
+            ActionType:"OK",
+        })
+    }
 };
 module.exports = UserController;

@@ -54,6 +54,7 @@
                                 @click="handleAddNews">新增信息</el-button>
                             <el-button 
                                 type="danger" 
+                                :disabled="!selectedRows || selectedRows.length === 0"
                                 plain
                                 @click="handleDeleteChooseNews">删除信息</el-button>   
                         </el-col> 

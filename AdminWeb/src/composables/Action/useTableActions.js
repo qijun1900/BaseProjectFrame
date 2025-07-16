@@ -1,30 +1,55 @@
-// 添加更完善的类型提示
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+//Api请求方法
+import {PostDeleteOneUser,getUserList,PostDeleteManyUser} from '@/API/Users/userAPI'
+//表格操作方法
 export function useTableActions() {
-    const selectedRows = ref([])
+    const selectedRows = ref([])// 选中的行数据
     
     const handleSelectionChange = (val) => {
         selectedRows.value = val
-        console.log('Selected rows:', val)
     }
     
-    // 增强删除逻辑，支持单条和批量删除
-    const handleDelete = (target) => {
+    // 支持单条和批量删除
+    const handleDelete = async(target) => {
         if (Array.isArray(target)) {
-            console.log('批量删除:', target)
+            try {
+                const userIds = target.map(user => user._id)
+                const res = await PostDeleteManyUser(userIds)
+                if(res.ActionType === 'OK'){
+                    ElMessage.success('批量删除成功')
+                }
+                console.log('批量删除:', userIds)
+            }catch (error) {
+                console.error('批量删除失败:', error)
+                throw error
+            }
         } else {
-            console.log('单条删除:', target)
+            try {
+                const res = await PostDeleteOneUser(target._id)
+                if(res.ActionType === 'OK'){
+                    ElMessage.success('单条删除成功')
+                }
+            } catch (error) {
+                console.error('删除失败:', error)
+                throw error
+            }
         }
-        // 这里可以添加通用的删除逻辑，例如API调用
     }
-
 
     //表格刷新方法
-    const handleRefresh = () => {
-        // 这里可以添加刷新逻辑，例如重新获取数据
-        console.log('表格刷新')
+    const handleRefresh =async  () => {
+        try{
+           const res  =  await getUserList()
+           if(res.ActionType=== 'OK'){
+            ElMessage.success('表格刷新成功')
+           }
+           return res 
+        }catch(error){
+            console.error('刷新表格失败:', error)
+            throw error
+        }
+       
     }
-
-    
     return { selectedRows, handleSelectionChange, handleDelete,handleRefresh }
 }

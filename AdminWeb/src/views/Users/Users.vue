@@ -1,121 +1,80 @@
 <template>
     <div>
         <transition name="slide-up">
-        <el-card style="border-radius: 4px" shadow="never"  v-show="showSearch">
-                <el-row :gutter="30">
-                    <el-col :span="7">
-                        <el-form-item label="输入条件:" style="margin-bottom: 0;">
-                            <el-input
-                                v-model="input1"
-                                style="width: 270px"
-                                placeholder="条件1"
-                                clearable/>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="7">                        
-                        <el-form-item label="输入条件:" style="margin-bottom: 0;">
-                            <el-input
-                                v-model="input2"
-                                style="width: 270px"
-                                placeholder="条件2"
-                                clearable/>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="7">
-                        <el-form-item label="输入条件:" style="margin-bottom: 0;">
-                            <el-input
-                                v-model="input3"
-                                style="width: 270px"
-                                placeholder="条件3"
-                                clearable/>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3">
-                         <Tooltip content="搜索内容">
-                            <template #description>
-                                <el-button type="primary" :icon="Search" circle />
-                            </template>
-                        </Tooltip>
-                        <Tooltip content="重置条件">
-                            <template #description>
-                                <el-button type="danger" :icon="CloseBold" circle />  
-                            </template>
-                        </Tooltip>                  
-                    </el-col>
-                </el-row>
-        </el-card>
+            <el-card style="border-radius: 4px" shadow="never" v-show="showSearch">
+                <SearchFilter :Data="tableData" :filterConfig="[
+                    {
+                        type: 'input',
+                        label: '名称',
+                        placeholder: '请输入用户名',
+                        field: 'userSearch',  // 存储值的字段名,初始化时会清空
+                        fields: ['username'] // 要搜索的字段
+                    },
+                    {
+                        type: 'select',
+                        label: '性别',
+                        placeholder: '请选择性别',
+                        field: 'genderFilter',
+                        fields: ['gender'],
+                        options: genderOptions
+                    },
+                    {
+                        type: 'select',
+                        label: '角色',
+                        placeholder: '请选择角色',
+                        field: 'roleFilter',
+                        fields: ['role'],
+                        options: roleOptions
+                    }
+                ]" @onsearch="handleOnSearch" />
+            </el-card>
         </transition>
         <div class="eidt-card">
-            <el-card style="border-radius: 4px," shadow="never" >
+            <el-card style="border-radius: 4px," shadow="never">
                 <div class="edit-btn">
                     <el-row :gutter="200">
-                        <el-col :span="18"> 
-                            <el-button 
-                                type="success" 
-                                plain
-                                @click="handleAddUser">新建用户</el-button>
-                            <el-button 
-                                type="danger" 
-                                plain
-                                @click="handleDeleteChooseUser">删除用户</el-button>   
-                            <el-button 
-                            type="warning" 
-                            plain
-                            @click="handleExportUser">导出用户</el-button>
-                        </el-col> 
-                        <el-col :span="6"> 
+                        <el-col :span="18">
+                            <el-button type="success" plain @click="handleAddUser">新建用户</el-button>
+                            <el-button type="danger" plain :disabled="!selectedRows || selectedRows.length === 0"
+                                @click="handleDeleteChooseUser">删除用户</el-button>
+                            <el-button type="warning" plain :disabled="!selectedRows || selectedRows.length === 0"
+                                @click="handleExportUser">导出用户</el-button>
+                        </el-col>
+                        <el-col :span="6">
                             <Tooltip content="隐藏搜索">
                                 <template #description>
-                                    <el-button 
-                                        type="primary" 
-                                        :icon="Hide" 
-                                        circle 
-                                        @click="HandleHideSearch"/>
+                                    <el-button type="primary" :icon="Hide" circle @click="HandleHideSearch" />
                                 </template>
                             </Tooltip>
                             <Tooltip content="开启/关闭斑马纹">
                                 <template #description>
-                                    <el-button 
-                                        type="primary" 
-                                        :icon="Open" 
-                                        circle 
-                                        @click="handleOpenStripe"/>
+                                    <el-button type="primary" :icon="Open" circle @click="handleOpenStripe" />
                                 </template>
                             </Tooltip>
                             <Tooltip content="刷新表格">
                                 <template #description>
-                                    <el-button 
-                                        type="primary" 
-                                        :icon="RefreshRight" 
-                                        circle 
-                                        @click="handleRefresh" />
+                                    <el-button type="primary" :icon="RefreshRight" circle
+                                        @click="handleRefreshUserData" />
                                 </template>
                             </Tooltip>
-                        </el-col> 
+                        </el-col>
                     </el-row>
                 </div>
                 <div class="edit-table">
-                    <el-table 
-                        :data="tableData" 
-                        style="width: 100%" 
-                        @selection-change="handleSelectionChange"
-                        max-height="690"
-                        :stripe="IsOpenStripe">
+                    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
+                        max-height="690" :stripe="IsOpenStripe">
                         <el-table-column type="selection" width="55" />
-                        <el-table-column 
-                            type="index" 
-                            label="序号" 
-                            width="70"
-                            :index="(index) => index + 1" />
-                        <el-table-column  label="名称" width="100" >
+                        <el-table-column type="index" label="序号" width="70" :index="(index) => index + 1" />
+                        <el-table-column label="名称" width="100">
                             <template #default="scope">
-                                {{ scope.row.name }}
+                                {{ scope.row.username }}
                             </template>
                         </el-table-column>
                         <el-table-column label="头像" width="100">
                             <template #default="scope">
                                 <div v-if="scope.row.avatar">
-                                    <el-avatar :size="50" :src=" `http://${escconfig.serverHost}:${escconfig.serverPort}` + scope.row.avatar"></el-avatar>
+                                    <el-avatar :size="50"
+                                        :src="`http://${escconfig.serverHost}:${escconfig.serverPort}` + scope.row.avatar"></el-avatar>
                                 </div>
                                 <div v-else>
                                     <el-avatar :size="50"
@@ -123,9 +82,9 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="简介" width="250" >
+                        <el-table-column label="简介" width="200">
                             <template #default="scope">
-                                {{ scope.row.address }}
+                                {{ scope.row.introduction }}
                             </template>
                         </el-table-column>
                         <el-table-column label="性别" width="100">
@@ -138,38 +97,31 @@
                         <el-table-column label="角色" width="150">
                             <template #default="scope">
                                 <el-tag v-if="scope.row.role === 1" type="success">管理员</el-tag>
-                                <el-tag v-else type="warning">编辑</el-tag>
+                                <el-tag v-else-if="scope.row.role === 2" type="warning">编辑</el-tag>
                             </template>
                         </el-table-column>
                         <el-table-column label="状态" width="150">
                             <template #default="scope">
-                                <el-tag v-if="scope.row.status === 1" type="success" round>启用</el-tag>
+                                <el-tag v-if="scope.row.state === 1" type="success" round>启用</el-tag>
                                 <el-tag v-else type="danger" round>禁用</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column  label="创建时间" width="150" >
+                        <el-table-column label="创建时间" width="200">
                             <template #default="scope">
-                                {{ scope.row.date }}
+                                {{ formatTime.getTime(scope.row.createTime) }}
                             </template>
                         </el-table-column>
                         <el-table-column label="操作">
-                            <template  #default="scope">
-                                <el-button 
-                                    type="primary" 
-                                    plain
-                                    @click="handleEdit(scope.row)">
+                            <template #default="scope">
+                                <el-button type="primary" plain @click="handleEdit(scope.row)">
                                     编辑
                                 </el-button>
-                                <el-button
-                                    type="danger"
-                                    plain
-                                    @click="handleDelete(scope.row)">
-                                    删除
-                                </el-button>
-                                <el-button
-                                    type="info"
-                                    plain
-                                    @click="handleMore(scope.row)">
+                                <Popconfirm title="您确定删除吗？" @confirm="handleDeleteOne(scope.row)">
+                                    <el-button type="danger" plain>
+                                        删除
+                                    </el-button>
+                                </Popconfirm>
+                                <el-button type="info" plain @click="handleMore(scope.row)">
                                     更多
                                 </el-button>
                             </template>
@@ -177,306 +129,222 @@
                     </el-table>
                 </div>
                 <div class="pagination">
-                    <Pagination/>
+                    <Pagination />
                 </div>
             </el-card>
         </div>
         <div>
-            <AddDialog
-                DilogTitle="添加用户"
-                DilogWidth="700px" 
-                v-model="dialogVisible"  
-                @dialog-confirm="handleConfirmAddUser">
+            <Dialog :DilogTitle="isEditMode ? '编辑用户' : '添加用户'" DilogWidth="700px" v-model="dialogVisible"
+                @dialog-confirm="handleConfirmUser">
                 <template #dialogcontent>
-                  <el-form ref="userFormRef" 
-                        :model="userForm" 
-                        :rules="userFormrules">
+                    <el-form ref="userFormRef" :model="userForm" :rules="userFormrules">
                         <el-form-item label="用户名" prop="username">
                             <el-input v-model="userForm.username" />
                         </el-form-item>
-                        <el-form-item label="密码" prop="password">
-                            <el-input v-model="userForm.password" type="password"/>
+                        <el-form-item label="密码" prop="password" v-show="!isEditMode">
+                            <el-input v-model="userForm.password" type="password" />
                         </el-form-item>
-                         <el-form-item label="角色" prop="role">
-                            <el-select
-                                v-model="userForm.role"
-                                placeholder="Select">
-                                <el-option
-                                v-for="item in roleOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"/>
+                        <el-form-item label="角色" prop="role">
+                            <el-select v-model="userForm.role" placeholder="Select">
+                                <el-option v-for="item in roleOptions" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                             </el-select>
-                         </el-form-item>
+                        </el-form-item>
                         <el-form-item label="性别" prop="gender">
-                            <el-select
-                                v-model="userForm.gender"
-                                placeholder="Select">
-                                <el-option
-                                v-for="item in genderOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"/>
+                            <el-select v-model="userForm.gender" placeholder="Select">
+                                <el-option v-for="item in genderOptions" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item label="个人简介" prop="introduction">
-                            <el-input v-model="userForm.introduction" type="textarea"/>
+                            <el-input v-model="userForm.introduction" type="textarea" />
                         </el-form-item>
-                        <el-form-item 
-                        label="个人头像" 
-                        prop="avatar">
-                        <Upload 
-                        :avatar='userForm.avatar'
-                        @AvatarChange="handleChange"/>   
-                </el-form-item>
+                        <el-form-item label="个人头像" prop="avatar" v-show="!isEditMode" >
+                            <Upload 
+                            :avatar='userForm.avatar' 
+                            @AvatarChange="handleChange" />
+                        </el-form-item>
+                        <el-form-item label="用户状态" prop="state">
+                            <el-switch
+                                v-model="userForm.state"
+                                inline-prompt
+                                :active-value="1"
+                                :inactive-value="0"
+                                :active-icon="Check"
+                                :inactive-icon="Close">
+                            </el-switch>
+                        </el-form-item> 
                     </el-form>
                 </template>
-            </AddDialog>
+            </Dialog>
         </div>
     </div>
 </template>
 <script setup>
-import { ref ,reactive} from 'vue'
-import { Search, RefreshRight, CloseBold, Hide ,Open} from '@element-plus/icons-vue' 
+import { ref, reactive, onMounted, defineAsyncComponent } from 'vue'
+import { RefreshRight, Hide, Open,Check,Close } from '@element-plus/icons-vue'
 import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
-import { useTableState ,useSearchUserFilters} from '@/composables/State/useTableState'
+import { useTableState } from '@/composables/State/useTableState'
 import { useTableActions } from '@/composables/Action/useTableActions'
 import escconfig from '../../config/esc.config';
-import AddDialog from '@/components/FunComponents/AddDialog .vue'
-import Upload from '@/components/upload/Upload.vue';
+import { postAddUser, postEditUser } from '@/API/Users/userAPI'//API
+import { ElMessage } from 'element-plus'
+import formatTime from '@/util/formatTime'
+import Popconfirm from '@/components/ReuseComponents/Popconfirm.vue'
+import SearchFilter from '@/components/FunComponents/SearchFilter.vue'
+
+// 动态导入较大的组件
+const Dialog = defineAsyncComponent(() =>
+    import('@/components/FunComponents/Dialog .vue')
+)
+const Upload = defineAsyncComponent(() =>
+    import('@/components/upload/Upload.vue')
+)
 
 //tableData数据
-const tableData = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2016-05-02',
-    name: 'Lucy',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 2,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-   {
-    date: '2024-03-01',
-    name: '张伟',
-    address: '北京市朝阳区建国路',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2024-03-02', 
-    name: '王芳',
-    address: '上海市浦东新区',
-    gender: 2,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2024-03-03',
-    name: '李强',
-    address: '广州市天河区体育西路',
-    gender: 1,
-    role: 2,
-    status: 1
-  },
-  {
-    date: '2024-03-04',
-    name: '赵敏',
-    address: '深圳市福田区',
-    gender: 2,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2024-03-05',
-    name: '陈伟',
-    address: '杭州市西湖区',
-    gender: 0,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2024-03-20',
-    name: '周涛',
-    address: '成都市锦江区',
-    gender: 1,
-    role: 2,
-    status: 1
-  },
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2016-05-02',
-    name: 'Lucy',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 2,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-   {
-    date: '2024-03-01',
-    name: '张伟',
-    address: '北京市朝阳区建国路',
-    gender: 1,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2024-03-02', 
-    name: '王芳',
-    address: '上海市浦东新区',
-    gender: 2,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2024-03-03',
-    name: '李强',
-    address: '广州市天河区体育西路',
-    gender: 1,
-    role: 2,
-    status: 1
-  },
-  {
-    date: '2024-03-04',
-    name: '赵敏',
-    address: '深圳市福田区',
-    gender: 2,
-    role: 1,
-    status: 1
-  },
-  {
-    date: '2024-03-05',
-    name: '陈伟',
-    address: '杭州市西湖区',
-    gender: 0,
-    role: 2,
-    status: 0
-  },
-  {
-    date: '2024-03-20',
-    name: '周涛',
-    address: '成都市锦江区',
-    gender: 1,
-    role: 2,
-    status: 1
-  }
-];
+const tableData = ref([]);
 // 对话框状态
 const dialogVisible = ref(false)
+// 添加编辑状态
+const isEditMode = ref(false)
+const currentEditId = ref(null)
 // UI 状态与方法管理
 const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTableState()
-// 搜索条件管理
-const { input1, input2, input3 } = useSearchUserFilters()
 // 表格数据与方法管理
-const { selectedRows, handleSelectionChange, handleDelete,handleRefresh } = useTableActions()
-// 复用通用删除逻辑
-const handleDeleteChooseUser = () => handleDelete(selectedRows.value)
-
-const userFormRef = ref()
-const userForm = reactive({
-    username:"",
-    password:"",
-    role:2,//1超级管理员，2编辑
-    introduction:"",
-    avatar:"",
-    file:null,
-    gender:0
-})
-const userFormrules = reactive({
-    username: [
-        { 
-        required: true,
-        message: '请输入名字', 
-        trigger: 'blur'    
-        }
-    ],
-    password: [
-        { 
-        required: true,
-        message: '请输入密码', 
-        trigger: 'blur'    
-        }
-    ],
-    role: [
-        { 
-        required: true,
-        message: '请设置权限', 
-        trigger: 'blur'    
-        }
-    ],
-    introduction: [
-        { 
-        required: true,
-        message: '请输入介绍', 
-        trigger: 'blur'    
-        }
-    ],
-    avatar: [
-        { 
-        required: true,
-        message: '请上传头像', 
-        trigger: 'blur'    
-        }
-    ],
-})
-//头像上传
-const handleChange = (file)=>{
-    userForm.avatar = URL.createObjectURL(file)
-    userForm.file = file
-}
+const { selectedRows, handleSelectionChange, handleDelete, handleRefresh } = useTableActions()
 //角色字段
-const roleOptions =[
+const roleOptions = [
     { label: '管理员', value: 1 },
     { label: '编辑', value: 2 }
 ]
 //性别字段
-const genderOptions =[
+const genderOptions = [
     { label: '保密', value: 0 },
     { label: '男', value: 1 },
     { label: '女', value: 2 }
 ]
+const userFormRef = ref()
+const userForm = reactive({
+    username: "",
+    password: "",
+    role: 2,//1管理员，2编辑
+    introduction: "",
+    avatar: "",
+    file: null,
+    gender: 0,
+    state: 1//默认状态为1,关闭状态为0
+})
+const userFormrules = reactive({
+    username: [
+        {
+            required: true,
+            message: '请输入名字',
+            trigger: 'blur'
+        }
+    ],
+    password: [
+        {
+            required: !isEditMode.value, // 编辑模式下非必填
+            message: '请输入密码',
+            trigger: 'blur'
+        }
+    ],
+    role: [
+        {
+            required: true,
+            message: '请设置权限',
+            trigger: 'blur'
+        }
+    ],
+    introduction: [
+        {
+            required: true,
+            message: '请输入介绍',
+            trigger: 'blur'
+        }
+    ],
+    avatar: [
+        {
+            required: true,
+            message: '请上传头像',
+            trigger: 'blur'
+        }
+    ],
+})
+//头像上传
+const handleChange = (file) => {
+    userForm.avatar = URL.createObjectURL(file)
+    userForm.file = file
+}
+
+//删除单个
+const handleDeleteOne = async (row) => {
+    await handleDelete(row)
+    handleRefreshUserData()
+}
+//删除选择的逻辑
+const handleDeleteChooseUser = async () => {
+    await handleDelete(selectedRows.value)
+    handleRefreshUserData()
+}
+
 //业务逻辑
+//handleEdit
+const handleEdit = (row) => {
+    console.log(row, "编辑")
+    isEditMode.value = true
+    currentEditId.value = row._id
+    // 填充表单数据
+    Object.assign(userForm, {
+        username: row.username,
+        password: '', // 密码通常不显示
+        role: row.role,
+        introduction: row.introduction,
+        avatar: row.avatar,
+        file: null,
+        gender: row.gender,
+        state: row.state
+    })
+    dialogVisible.value = true
+}
 //增加用户,出现对话框
-const handleAddUser = ()=>{
+const handleAddUser = () => {
     dialogVisible.value = true;
 }
-//确认增加用户
-const handleConfirmAddUser = ()=>{
-    dialogVisible.value = false;
-    console.log(userForm)
-    // 重置表单数据
+// 修改确认方法，区分添加和编辑
+const handleConfirmUser = async () => {
+    dialogVisible.value = false
+    try {
+        // 准备提交数据
+        const submitData = { ...userForm, _id: currentEditId.value }
+
+        if (isEditMode.value) {
+            const res = await postEditUser(submitData)
+            if (res.ActionType === "OK") {
+                ElMessage.success('用户修改成功')
+            }
+        } else {
+            const valid = await userFormRef.value.validate()
+            if (!valid) {
+                ElMessage.error('请完善表单信息')
+                return
+            }
+            const res = await postAddUser(submitData)
+            if (res.ActionType === "OK") {
+                ElMessage.success('用户添加成功')
+            }
+        }
+        await handleRefreshUserData()
+    } catch (error) {
+        ElMessage.error(isEditMode.value ? "用户修改失败" : "用户添加失败")
+        console.log(error)
+    }
+    resetUserForm()
+}
+
+// 重置表单方法
+const resetUserForm = () => {
     Object.assign(userForm, {
         username: "",
         password: "",
@@ -484,17 +352,43 @@ const handleConfirmAddUser = ()=>{
         introduction: "",
         avatar: "",
         file: null,
-        gender: 0
-    });
+        gender: 0,
+        state: 1
+    })
+    isEditMode.value = false
+    currentEditId.value = null
+}
+//导出用户
+const handleExportUser = () => {
+    console.log('导出用户')
+}
+//handleMore
+const handleMore = (row) => {
+    console.log(row, "更多操作")
 }
 
-
-
-const handleExportUser = ()=>{
-
+//获取用户列表
+const handleRefreshUserData = async () => {
+    try {
+        const res = await handleRefresh()
+        tableData.value = res.data
+        console.log(res)
+    } catch (error) {
+        ElMessage.error('表格数据获取失败')
+        console.log(error)
+    }
 }
-
-
+//按下搜索按钮
+const handleOnSearch = (data) => {
+    if (data.length === 0) {
+        ElMessage.error('未搜索到用户')
+    } else {
+        tableData.value = data
+    }
+}
+onMounted(() => {
+    handleRefreshUserData()
+})
 </script>
 
 
@@ -502,18 +396,22 @@ const handleExportUser = ()=>{
 .eidt-card {
     margin-top: 10px;
 }
-.edit-table{
+
+.edit-table {
     margin-top: 10px;
 }
-.pagination{
+
+.pagination {
     margin-top: 15px;
-    display: flex; 
-    justify-content: center; 
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
+
 :deep(.el-table__header th) {
     background-color: #f5f7fa !important;
 }
+
 /* 添加滑动过渡效果 */
 .slide-up-enter-active,
 .slide-up-leave-active {
@@ -526,6 +424,3 @@ const handleExportUser = ()=>{
     opacity: 0;
 }
 </style>
-
-
-

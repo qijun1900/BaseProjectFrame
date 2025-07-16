@@ -7,6 +7,8 @@ const UserSchema = new mongoose.Schema({
     introduction:String,
     avatar:String,
     role:Number,//管理员1，编辑2
+    state:Number,//状态，0，1，
+    createTime:Date,
 })
 
 
