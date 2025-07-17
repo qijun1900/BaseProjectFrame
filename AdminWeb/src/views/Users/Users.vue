@@ -166,12 +166,20 @@
                     </el-table>
                 </div>
                 <div class="pagination">
-                    <Pagination />
+                      <Pagination 
+                        :total="total"
+                        v-model:current-page="currentPage"
+                        v-model:page-size="pageSize"
+                        @page-change="handlePageChange"/>
                 </div>
             </el-card>
         </div>
         <div>
-            <Dialog :DilogTitle="isEditMode ? '编辑用户' : '添加用户'" DilogWidth="700px" v-model="dialogVisible"
+            <Dialog 
+                :DilogTitle="isEditMode ? '编辑用户' : '添加用户'" 
+                :DilogButContent="isEditMode ? '提交更改' : '添加用户'"
+                DilogWidth="700px" 
+                v-model="dialogVisible"
                 @dialog-confirm="handleConfirmUser">
                 <template #dialogcontent>
                     <el-form ref="userFormRef" :model="userForm" :rules="userFormrules">
@@ -261,7 +269,9 @@ const genderOptions = [
     { label: '男', value: 1 },
     { label: '女', value: 2 }
 ]
+//表单ref
 const userFormRef = ref()
+//表单数据
 const userForm = reactive({
     username: "",
     password: "",
@@ -272,6 +282,7 @@ const userForm = reactive({
     gender: 0,
     state: 1//默认状态为1,关闭状态为0
 })
+//表单验证规则
 const userFormrules = reactive({
     username: [
         {
@@ -309,6 +320,10 @@ const userFormrules = reactive({
         }
     ],
 })
+//表格相关
+const currentPage = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
 //头像上传
 const handleChange = (file) => {
     userForm.avatar = URL.createObjectURL(file)
@@ -407,9 +422,12 @@ const handleMore = (row) => {
 //获取用户列表
 const handleRefreshUserData = async () => {
     try {
-        const res = await handleRefresh()
-        tableData.value = res.data
-        console.log(res)
+        const res = await handleRefresh({
+            page: currentPage.value,
+            size: pageSize.value,   
+        })
+        tableData.value = res.data.data//表格数据
+        total.value = res.data.total//总条数
     } catch (error) {
         ElMessage.error('表格数据获取失败')
         console.log(error)
@@ -423,12 +441,16 @@ const handleOnSearch = (data) => {
         tableData.value = data
     }
 }
+// 添加分页变化处理方法
+const handlePageChange = ({ page, size }) => {
+    currentPage.value = page
+    pageSize.value = size
+    handleRefreshUserData()
+}
 onMounted(() => {
     handleRefreshUserData()
 })
 </script>
-
-
 <style scoped>
 .eidt-card {
     margin-top: 10px;

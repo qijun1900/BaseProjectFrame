@@ -13,7 +13,7 @@
         <el-button 
           type="primary" 
           @click="handleConfirm">
-          {{ props.DilogTitle }}
+          {{ props.DilogButContent }}
         </el-button>
       </div>
     </template>
@@ -35,7 +35,12 @@ const props = defineProps({
   DilogWidth: {
     type: String,
     default: "500px"
+  },
+  DilogButContent: {
+    type: String,
+    default: "确认"
   }
+
 })
 
 // 同步父组件的 v-model 值

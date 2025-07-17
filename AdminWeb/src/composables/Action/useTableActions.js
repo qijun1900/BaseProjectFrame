@@ -38,9 +38,12 @@ export function useTableActions() {
     }
 
     //表格刷新方法
-    const handleRefresh =async  () => {
+    const handleRefresh =async  (params = {}) => {
         try{
-           const res  =  await getUserList()
+           const res  =  await getUserList({
+            page: params.page || 1,
+            size: params.size || 20
+           })
            if(res.ActionType=== 'OK'){
             ElMessage.success('表格刷新成功')
            }

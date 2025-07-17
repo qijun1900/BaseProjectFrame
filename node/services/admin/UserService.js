@@ -29,9 +29,20 @@ const UserService = {
       createTime
     })
   },
-  getlist: async ({ id }) => {
-    return id ? UserModel.find({ _id: id }, ["username", "introduction", "gender", "role", "password", "state", "createTime"]) : UserModel.find({}, ["username", "introduction", "gender", "role", "avatar", "state", "state", "createTime"])
-
+  // 修改getlist方法
+  getlist: async ({ id, page, size }) => {
+      if(id) {
+          return UserModel.find({ _id: id }, ["username", "introduction", "gender", "role", "password", "state", "createTime"]);
+      }
+      // 分页查询
+      const [data, total] = await Promise.all([
+          UserModel.find({}, ["username", "introduction", "gender", "role", "avatar", "state", "createTime"])
+              .skip((page - 1) * size)
+              .limit(Number(size)),
+          UserModel.countDocuments({})
+      ]);
+      
+      return { data, total };
   },
   dellist: async ({ _id }) => {
     return UserModel.deleteOne({ _id })

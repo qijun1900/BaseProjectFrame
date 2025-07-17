@@ -84,10 +84,16 @@ const UserController = {
         })
     },
     getList:async (req,res)=>{
-        const result = await UserService.getlist(req.params)
+        const {page,size} = req.query
+        const result = await UserService.getlist({
+            ...req.params,
+            page: Number(page),
+            size: Number(size)
+        })
         res.send({
             ActionType:"OK",  
-            data:result
+            data:result,
+            total: result.total
         })
     },
     delListOneUser:async (req,res)=>{

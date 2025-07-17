@@ -2,17 +2,22 @@ import axios from "axios";
 import upload from "@/util/upload";
 
 export async function getUserList(params) {
-    // 获取用户列表
+    // 获取用户列表（添加分页参数）
     try {
-        const response = await axios.get("/adminapi/user/list", params);
+        const response = await axios.get("/adminapi/user/list", {
+            params: { // 将参数放在params配置项中
+                page: params?.page || 1,
+                size: params?.size || 20,
+                // 保留其他可能的查询参数
+                ...params 
+            }
+        });
         if(response.data.ActionType === "OK") {
             return response.data;
         }
-        else {
-            return null;
-        }
-    }catch (error) {
-        console.error("Error during user login:", error);
+        return null;
+    } catch (error) {
+        console.error("Error fetching user list:", error); // 修正错误描述
         throw error;
     }
 }
