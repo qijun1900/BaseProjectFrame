@@ -16,10 +16,18 @@
 <script setup>
 import { defineEmits, defineProps, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
-import escconfig  from '@/config/esc.config';
+import escconfig from '@/config/esc.config';
 
 const props = defineProps({
   avatar: String,
+  width: {
+    type: [String, Number],
+    default: '178px'
+  },
+  height: {
+    type: [String, Number],
+    default: '178px'
+  }
 });
 
 const emit = defineEmits(['AvatarChange']);
@@ -37,12 +45,14 @@ const uploadAvatar = computed(() =>
 
 <style>
 .avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
+  width: v-bind('typeof props.width === "number" ? `${props.width}px` : props.width');
+  height: v-bind('typeof props.height === "number" ? `${props.height}px` : props.height');
   display: block;
 }
 
 .avatar-uploader .el-upload {
+  width: v-bind('typeof props.width === "number" ? `${props.width}px` : props.width');
+  height: v-bind('typeof props.height === "number" ? `${props.height}px` : props.height');
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
   cursor: pointer;
@@ -51,15 +61,11 @@ const uploadAvatar = computed(() =>
   transition: var(--el-transition-duration-fast);
 }
 
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
-
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
+  width: v-bind('typeof props.width === "number" ? `${props.width}px` : props.width');
+  height: v-bind('typeof props.height === "number" ? `${props.height}px` : props.height');
   text-align: center;
 }
 </style>

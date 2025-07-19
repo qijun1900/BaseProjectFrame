@@ -129,14 +129,10 @@ const submitForm = ()=>{
         }
     })
 }
-
-
-
 </script>
 <style scoped lang="scss">
 .demo-ruleForm{
     margin-top: 40px;
 }
-
 </style>
 

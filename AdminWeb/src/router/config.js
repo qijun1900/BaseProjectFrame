@@ -1,7 +1,7 @@
 import Home from "@/views/Home/Home.vue"
 import Center from "@/views/Center/Center.vue"
 import Users  from "@/views/Users/Users.vue"    
-import Notice from "@/views/News/Notice.vue"
+import Announcement from "@/views/News/Announcement.vue"
 import NotFound from "@/views/NotFound/NotFound.vue"
 
 const routes= [
@@ -22,8 +22,8 @@ const routes= [
         component: Users,
     },
     {
-        path: '/news/notice',
-        component: Notice,
+        path: '/news/announcement',
+        component: Announcement,
     },
     {
         path:'/:patchMatch(.*)*',

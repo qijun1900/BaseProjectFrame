@@ -1,8 +1,13 @@
 <template>
     <div>
         <transition name="slide-up">
-            <el-card style="border-radius: 4px" shadow="never" v-show="showSearch">
-                <SearchFilter :Data="tableData" :filterConfig="[
+            <el-card 
+                style="border-radius: 4px" 
+                shadow="never" 
+                v-show="showSearch">
+                <SearchFilter 
+                    :Data="tableData" 
+                    :filterConfig="[
                     {
                         type: 'input',
                         label: '名称',
@@ -26,7 +31,8 @@
                         fields: ['role'],
                         options: roleOptions
                     }
-                ]" @onsearch="handleOnSearch" />
+                ]" 
+                @onsearch="handleOnSearch" />
             </el-card>
         </transition>
         <div class="eidt-card">
@@ -37,19 +43,25 @@
                             <el-button 
                                 type="success" 
                                 plain 
-                                @click="handleAddUser">新建用户</el-button>
+                                @click="handleAddUser">新建用户
+                            </el-button>
+                            <Popconfirm
+                                title="您确定删除吗？"
+                                @confirm="handleDeleteMany">
                             <el-button type="danger" 
                                 plain 
-                                :disabled="!selectedRows || selectedRows.length === 0"
-                                @click="handleDeleteChooseUser">删除用户</el-button>
+                                :disabled="!selectedRows || selectedRows.length === 0">删除用户
+                            </el-button>
+                            </Popconfirm>
                             <el-button 
                                 type="warning" 
                                 plain 
                                 :disabled="!selectedRows || selectedRows.length === 0"
-                                @click="handleExportUser">导出用户</el-button>
+                                @click="handleExportUser">导出用户
+                            </el-button>
                         </el-col>
                         <el-col :span="6">
-                            <Tooltip content="隐藏搜索">
+                            <Tooltip content="隐藏/显示搜索">
                                 <template #description>
                                     <el-button 
                                         type="primary" 
@@ -182,7 +194,10 @@
                 v-model="dialogVisible"
                 @dialog-confirm="handleConfirmUser">
                 <template #dialogcontent>
-                    <el-form ref="userFormRef" :model="userForm" :rules="userFormrules">
+                    <el-form   
+                        ref="userFormRef" 
+                        :model="userForm" 
+                        :rules="userFormrules">
                         <el-form-item label="用户名" prop="username">
                             <el-input v-model="userForm.username" />
                         </el-form-item>
@@ -238,6 +253,7 @@ import { ElMessage } from 'element-plus'
 import formatTime from '@/util/formatTime'
 import Popconfirm from '@/components/ReuseComponents/Popconfirm.vue'
 import SearchFilter from '@/components/FunComponents/SearchFilter.vue'
+import {getUserList,PostDeleteOneUser,PostDeleteManyUser} from '@/API/Users/userAPI'//API
 
 // 动态导入较大的组件
 const Dialog = defineAsyncComponent(() =>
@@ -320,10 +336,11 @@ const userFormrules = reactive({
         }
     ],
 })
-//表格相关
+//表格相关，分页器
 const currentPage = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+
 //头像上传
 const handleChange = (file) => {
     userForm.avatar = URL.createObjectURL(file)
@@ -332,19 +349,19 @@ const handleChange = (file) => {
 
 //删除单个
 const handleDeleteOne = async (row) => {
-    await handleDelete(row)
+    await handleDelete(row, PostDeleteOneUser)
     handleRefreshUserData()
 }
+
 //删除选择的逻辑
-const handleDeleteChooseUser = async () => {
-    await handleDelete(selectedRows.value)
+const handleDeleteMany = async () => {
+    await handleDelete(selectedRows.value, PostDeleteManyUser)
     handleRefreshUserData()
 }
 
 //业务逻辑
 //handleEdit
 const handleEdit = (row) => {
-    console.log(row, "编辑")
     isEditMode.value = true
     currentEditId.value = row._id
     // 填充表单数据
@@ -397,16 +414,14 @@ const handleConfirmUser = async () => {
 
 // 重置表单方法
 const resetUserForm = () => {
-    Object.assign(userForm, {
-        username: "",
-        password: "",
-        role: 2,
-        introduction: "",
-        avatar: "",
-        file: null,
-        gender: 0,
-        state: 1
-    })
+    userForm.username = ""
+    userForm.password = ""
+    userForm.role = 2
+    userForm.introduction = ""
+    userForm.avatar = ""
+    userForm.file = null
+    userForm.gender = 0
+    userForm.state = 1
     isEditMode.value = false
     currentEditId.value = null
 }
@@ -418,16 +433,15 @@ const handleExportUser = () => {
 const handleMore = (row) => {
     console.log(row, "更多操作")
 }
-
-//获取用户列表
+//获取用户列表+刷新
 const handleRefreshUserData = async () => {
     try {
         const res = await handleRefresh({
             page: currentPage.value,
             size: pageSize.value,   
-        })
+        },getUserList)
         tableData.value = res.data.data//表格数据
-        total.value = res.data.total//总条数
+        total.value = res.data.total//
     } catch (error) {
         ElMessage.error('表格数据获取失败')
         console.log(error)

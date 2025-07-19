@@ -1,30 +1,30 @@
 const NewsService = require("../../services/admin/NewsService");
 
 const NewsController ={
-    add:async (req,res)=>{
-        const cover = req.file?`/newsuploads/${req.file.filename}`:""
-        const {tittle,content,category,isPublish } = req.body
-        await NewsService.add({
-            tittle,
-            content,
-            category:Number(category),
-            isPublish:Number(isPublish),
-            cover,
-            editTime:new Date()
-        })
-        res.send({
-            ActionType: "OK",
-        })
+    // add:async (req,res)=>{
+    //     const cover = req.file?`/newsuploads/${req.file.filename}`:""
+    //     const {tittle,content,category,isPublish } = req.body
+    //     await NewsService.add({
+    //         tittle,
+    //         content,
+    //         category:Number(category),
+    //         isPublish:Number(isPublish),
+    //         cover,
+    //         editTime:new Date()
+    //     })
+    //     res.send({
+    //         ActionType: "OK",
+    //     })
 
-    },
-    getList:async (req,res)=>{
-        const result = await NewsService.getlist({_id:req.params.id})
-        res.send({
-            ActionType: "OK",
-            data: result
-        })
+    // },
+    // getList:async (req,res)=>{
+    //     const result = await NewsService.getlist({_id:req.params.id})
+    //     res.send({
+    //         ActionType: "OK",
+    //         data: result
+    //     })
 
-    },
+    // },
     publish:async (req,res)=>{
         await NewsService.publish({
             ...req.body,
@@ -55,6 +55,57 @@ const NewsController ={
         res.send({
             ActionType: "OK",
         })
+    },
+    addAnnouncement:async (req,res)=>{
+        const cover = req.file?`/newsuploads/${req.file.filename}`:""
+        const {title,content,category,isPublish,creator } = req.body
+        console.log(title,content,category,isPublish,cover)
+        await NewsService.addAnnouncement({
+            title,
+            content,
+            category:Number(category),
+            isPublish:Number(isPublish),
+            cover,
+            creator,
+            editTime:new Date()
+        })
+        res.send({
+            ActionType: "OK",
+            code:200,
+        })
+    },
+    getAnnouncementList:async (req,res)=>{
+        const result = await NewsService.getAnnouncementList()
+        res.send({
+            ActionType: "OK",
+            data: result,
+            code:200,
+        })
+    },
+    DeleteOneAnnouncement:async (req,res)=>{
+        const {_id} = req.body
+        await NewsService.DeleteOneAnnouncement({_id})
+        res.send({
+            ActionType: "OK",
+            code:200,
+        })
+    },
+    DeleteManyAnnouncement:async (req,res)=>{
+        const {_ids} = req.body
+        await NewsService.DeleteManyAnnouncement({_ids})
+        res.send({
+            ActionType: "OK",
+            code:200,
+        })
+    },
+    updateStatus:async (req,res)=>{
+        const {_id,state} = req.body
+        await NewsService.updateStatus({_id,state})
+        res.send({
+            ActionType: "OK",
+            code:200,
+        })
+        
     }
 }
 

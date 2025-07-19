@@ -1,8 +1,10 @@
 <template>
     <el-dialog 
+    :draggable="props.draggable"
     v-model="dialogVisible" 
     :title="props.DilogTitle" 
-    :width="props.DilogWidth">
+    :width="props.DilogWidth"
+    :top="props.top">
     <slot name="dialogcontent"></slot>
     <template #footer>
       <div class="dialog-footer">
@@ -23,6 +25,7 @@
 import { ref, defineProps, defineEmits, watch } from 'vue'
 const emit = defineEmits(['dialogConfirm', 'update:modelValue'])
 const dialogVisible = ref(false)
+
 const props = defineProps({
   DilogTitle: {
     type: String,
@@ -39,8 +42,15 @@ const props = defineProps({
   DilogButContent: {
     type: String,
     default: "确认"
+  },
+  draggable: {//是否可以拖拽
+    type:Boolean,
+    default:false
+  },
+  top: { // 距离顶部的距离
+    type: String,
+    default: "15vh"
   }
-
 })
 
 // 同步父组件的 v-model 值

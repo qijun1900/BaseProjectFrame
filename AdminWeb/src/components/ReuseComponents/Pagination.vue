@@ -32,16 +32,13 @@ const emit = defineEmits(['update:currentPage', 'update:pageSize', 'page-change'
 
 const handleSizeChange = (val) => {// 每页条数改变
   pageSize.value = val// 手动更新每页条数
-  console.log(`每页 ${val} 条数据`)
   emit('update:pageSize', val)
   emit('page-change', { page: currentPage.value, size: val })
 }
 
 const handleCurrentChange = (val) => {// 当前页码改变
-  console.log(`当前页码: ${val}`)
   currentPage.value = val// 手动更新当前页码
   emit('update:currentPage', val)
   emit('page-change', { page: val, size: pageSize.value })
-
 }
 </script>
