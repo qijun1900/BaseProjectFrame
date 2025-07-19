@@ -10,7 +10,6 @@ const UserRouter = require('./routes/admin/UserRouter');
 const NewsRouter = require('./routes/admin/NewsRouter');
 const ProductRouter = require('./routes/admin/ProductRouter') 
 const WebNewsRouter = require('./routes/web/NewsRouter');
-const WebProductRouter = require('./routes/web/ProductRouter');
 
 var app = express();
 
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users',UserRouter)
 app.use(WebNewsRouter)
-app.use(WebProductRouter)
 
 /*
 adminapi===后台
