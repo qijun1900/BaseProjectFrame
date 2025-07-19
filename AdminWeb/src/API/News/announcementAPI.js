@@ -15,10 +15,17 @@ export async function postAddAnnouncement(data) {
         throw error;
     }
 }
-export async function getAnnouncementList() {
+export async function getAnnouncementList(params) {
     // 获取通知公告列表
     try {
-        const response = await axios.get("/adminapi/announcement/list"); 
+        const response = await axios.get("/adminapi/announcement/list",{
+             params: { // 将参数放在params配置项中
+                page: params?.page || 1,
+                size: params?.size || 20,
+                // 保留其他可能的查询参数
+                ...params 
+            }
+        }); 
         if(response.data.code===200) {
             return response.data; // 返回响应数据
         }
@@ -70,5 +77,14 @@ export async function updateAnnouncementPublishStatus(_id, state) {
     }
 
     
+}
+export async function postEditAnnouncement(data) {
+    try {
+        const response = await upload("/adminapi/announcement/edit", data);
+        return response;
+    } catch (error) {
+        console.error("Error during edit announcement:", error);
+        throw error;
+    }
 }
 

@@ -19,7 +19,7 @@ NewsRouter.get("/adminapi/announcement/list",NewsController.getAnnouncementList)
 NewsRouter.post("/adminapi/announcement/deloneannouncement",NewsController.DeleteOneAnnouncement)//删除单个信息
 NewsRouter.post("/adminapi/announcement/delmanyannouncement",NewsController.DeleteManyAnnouncement)//删除多个信息
 NewsRouter.post("/adminapi/announcement/updatestatus",NewsController.updateStatus)//修改通知公告发布状态
-
+NewsRouter.post("/adminapi/announcement/edit",upload.single('file'),NewsController.editAnnouncement)//修改通知公告内容
 
 
 module.exports = NewsRouter; 

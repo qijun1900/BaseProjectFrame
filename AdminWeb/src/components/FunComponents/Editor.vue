@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineEmits, defineProps } from 'vue';
+import { onMounted, onUnmounted, defineEmits, defineProps ,watch } from 'vue';
 import E from 'wangeditor'
 
 const emit = defineEmits(["event"])
@@ -18,6 +18,12 @@ const props = defineProps({
 let editor = null
 onMounted(() => {
     editor = new E('#myeditor')
+    // 添加内容变化监听
+    watch(() => props.content, (newVal) => {
+        if (editor && newVal !== editor.txt.html()) {
+            editor.txt.html(newVal)
+        }
+    })
     
     // 配置编辑器
     editor.config.height = props.height// 高度

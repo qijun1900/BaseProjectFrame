@@ -161,12 +161,17 @@
             </el-table>
         </div>
         <div class="pagination">
-            <Pagination />
+            <Pagination 
+                :total="total"
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                @page-change="handlePageChange"/>
         </div>
     </div>
     <div>
         <Dialog 
-            DilogTitle="新增通知/公告" 
+            :DilogTitle="isEditMode ? '编辑通知/公告' : '新增通知/公告'" 
+            :DilogButContent="isEditMode ? '提交更改' : '添加通知/公告'"
             DilogWidth="1090px" 
             :draggable="true" 
             top="2vh" 
@@ -193,7 +198,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="内容" prop="content">
-                        <Editor @event="handlechange" :height="300" />
+                        <Editor @event="handlechange" :height="300" :content="Form.content"/>
                     </el-form-item>
                     <el-form-item label="封面" prop="cover">
                         <Upload 
@@ -216,12 +221,18 @@ import Pagination from '@/components/ReuseComponents/Pagination.vue'
 import { ref, defineAsyncComponent, reactive,onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import Editor from '@/components/FunComponents/Editor.vue'
-import {postAddAnnouncement,getAnnouncementList,PostDeleteManyAnnouncement,PostDeleteOneAnnouncement,updateAnnouncementPublishStatus} from '@/API/News/announcementAPI'//APi
+import {
+        postAddAnnouncement,
+        getAnnouncementList,
+        PostDeleteManyAnnouncement,
+        PostDeleteOneAnnouncement,
+        updateAnnouncementPublishStatus,
+        postEditAnnouncement
+    } from '@/API/News/announcementAPI'//APi
 import { useAppStore } from '@/stores';
 import formatTime from '@/util/formatTime'
 import Popconfirm from '@/components/ReuseComponents/Popconfirm.vue'
 import SearchFilter from '@/components/FunComponents/SearchFilter.vue'
-
 
 // 动态导入较大的组件
 const Dialog = defineAsyncComponent(() =>
@@ -243,7 +254,6 @@ const currentEditId = ref(null)
 const { showSearch, IsOpenStripe, HandleHideSearch, handleOpenStripe } = useTableState()
 // 表格数据与方法管理
 const { selectedRows, handleSelectionChange, handleDelete, handleRefresh } = useTableActions()
-
 //表单
 const FormRef = ref()
 const Form = reactive({
@@ -297,6 +307,10 @@ const options = [
         value: 2
     },
 ]
+//表格分页器
+const currentPage = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
 //editor内容改变的回调
 const handlechange = (data) => {
     Form.content = data
@@ -326,7 +340,22 @@ const handleOnSearch = (data) => {
         tableData.value = data
     }
 }
-
+// 添加编辑方法
+const handleEdit = (row) => {
+    isEditMode.value = true
+    currentEditId.value = row._id
+    // 填充表单数据
+    Object.assign(Form, {
+        title: row.title,
+        content: row.content,
+        category: row.category,
+        cover: row.cover,
+        file: null,
+        isPublish: row.isPublish,
+        creator: row.creator
+    })
+    dialogVisible.value = true
+}
 // 新增信息
 const handleAddNews = () => {
     dialogVisible.value = true
@@ -335,25 +364,30 @@ const handleAddNews = () => {
 const handleConfirm = async() => {
     dialogVisible.value = false
     try {
-        const submitData = { ...Form,_id: currentEditId.value }
-        if(isEditMode.value){
-            console.log('编辑信息:', submitData)
-        }else{
+        const submitData = { ...Form, _id: currentEditId.value }
+        
+        if(isEditMode.value) {
+            const res = await postEditAnnouncement(submitData)
+            if(res.ActionType === "OK") {
+                ElMessage.success('公告修改成功')
+            }
+        } else {
             const valid = await FormRef.value.validate()
             if (!valid) {
                 ElMessage.error('请填写完整信息')
+                return
             }
             const res = await postAddAnnouncement(submitData)
-            if (res.code === 200) {
-                ElMessage.success('添加信息成功')
-                resetForm()
-                handleRefreshAnData()
+            if(res.ActionType === "OK") {
+                ElMessage.success('公告添加成功')
             }
         }
-    }catch (error) {
-        ElMessage.error('添加信息失败')
-        console.error('添加信息失败:', error)
+        await handleRefreshAnData()
+    } catch (error) {
+        ElMessage.error(isEditMode.value ? "公告修改失败" : "公告添加失败")
+        console.error(error)
     }
+    resetForm()
 }
 //删除单个
 const handleDeleteOne = async (row) => {
@@ -365,9 +399,16 @@ const handleDeleteMany = async () => {
     await handleDelete(selectedRows.value,PostDeleteManyAnnouncement)
     handleRefreshAnData()
 }
-//look
+//点击查看详细信息
 const handleLooked = (content) => {
-    console.log(content)
+    ElMessage({
+        showClose: true,
+        dangerouslyUseHTMLString: true,// 允许使用 HTML 内容
+        message: `信息内容为:${content}`,
+        duration: 5000,
+        type: 'primary',
+        plain: true,
+    })
 }
 // 处理发布状态变化
 const handlePublishChange = async (row) => {
@@ -385,16 +426,24 @@ const handlePublishChange = async (row) => {
 const handleRefreshAnData = async() => {
     try{
         const res = await handleRefresh({
-
+            page: currentPage.value,
+            size: pageSize.value,  
         },getAnnouncementList)
         console.log(res)
         if(res.code === 200){
-            tableData.value = res.data
+            tableData.value = res.data.data
+            total.value = res.total
         }
     }catch(error){
         ElMessage.error('获取列表失败')
         console.error('获取列表失败:', error)
     }
+}
+// 添加分页变化处理方法
+const handlePageChange = ({ page, size }) => {
+    currentPage.value = page
+    pageSize.value = size
+    handleRefreshAnData()
 }
 
 onMounted(()=>{

@@ -61,7 +61,7 @@ const NewsController ={
         const {title,content,category,isPublish,creator } = req.body
         console.log(title,content,category,isPublish,cover)
         await NewsService.addAnnouncement({
-            title,
+            title,  
             content,
             category:Number(category),
             isPublish:Number(isPublish),
@@ -75,11 +75,16 @@ const NewsController ={
         })
     },
     getAnnouncementList:async (req,res)=>{
-        const result = await NewsService.getAnnouncementList()
+        const {page,size} = req.query
+        const result = await NewsService.getAnnouncementList({
+            page: Number(page),
+            size: Number(size)
+        })
         res.send({
             ActionType: "OK",
             data: result,
             code:200,
+            total: result.total
         })
     },
     DeleteOneAnnouncement:async (req,res)=>{
@@ -106,6 +111,23 @@ const NewsController ={
             code:200,
         })
         
+    },
+    editAnnouncement:async (req,res)=>{
+        const cover = req.file?`/newsuploads/${req.file.filename}`:""
+        const {title,content,category,isPublish,_id } = req.body
+        await NewsService.editAnnouncement({
+            title,
+            content,
+            category:Number(category),
+            isPublish:Number(isPublish),
+            cover,  
+            editTime:new Date(),
+            _id
+        })
+        res.send({
+            ActionType: "OK",
+            code:200,
+        })
     }
 }
 

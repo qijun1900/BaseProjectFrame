@@ -440,6 +440,7 @@ const handleRefreshUserData = async () => {
             page: currentPage.value,
             size: pageSize.value,   
         },getUserList)
+        console.log(res)
         tableData.value = res.data.data//表格数据
         total.value = res.data.total//
     } catch (error) {
