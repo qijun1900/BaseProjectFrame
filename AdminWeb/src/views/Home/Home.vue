@@ -11,11 +11,16 @@
                     <div class="card-content">
                         <div class="card-header">
                             <el-icon class="card-icon"><Promotion /></el-icon>
-                            <span class="card-title">快捷操作</span>
+                            <span class="card-title">添加用户</span>
                         </div>
                         <div class="card-body">
-                            <el-statistic title="日活跃用户" :value="268500" />
-                            <el-button type="primary" class="card-button">操作按钮</el-button>
+                            <el-statistic title="管理人员数量" :value="userTotal" />
+                            <el-button 
+                                type="primary" 
+                                class="card-button"
+                                @click="handleAddUser">
+                                点击添加
+                            </el-button>
                         </div>
                     </div>
                 </el-card>
@@ -25,11 +30,14 @@
                     <div class="card-content">
                         <div class="card-header">
                             <el-icon class="card-icon"><Promotion /></el-icon>
-                            <span class="card-title">数据统计</span>
+                            <span class="card-title">通知公告统计</span>
                         </div>
                         <div class="card-body">
-                            <el-statistic title="总用户数" :value="12500" />
-                            <el-button type="primary" class="card-button">查看详情</el-button>
+                            <el-statistic title="通知公告数量" :value="announcementTotal" />
+                            <el-button 
+                                type="primary" 
+                                class="card-button"
+                                @click="handleCheeckAnnouncement">查看详情</el-button>
                         </div>
                     </div>
                 </el-card>
@@ -76,7 +84,47 @@ import Divider from '@/components/ReuseComponents/Divider.vue';
 import { EditPen ,Promotion} from '@element-plus/icons-vue';
 import BarChart from '@/components/Chart/BarChart.vue';
 import PieChart from '@/components/Chart/PieChart.vue';
-// import LineChart from '@/components/FunComponents/LineChart.vue';
+import RouterPush from '@/util/RouterPush';
+import { onMounted,ref} from 'vue';
+import {getUserList} from '@/API/Users/userAPI'//API
+import {getAnnouncementList} from '@/API/News/announcementAPI'//APi
+
+const userTotal = ref(0)
+const announcementTotal = ref(0)
+
+const handleAddUser = () => {
+    RouterPush("/users",{showAddDialog:true })
+};
+const handleCheeckAnnouncement = () => {
+    RouterPush("/news/announcement")
+};
+const fetchData = async() => {
+    try {
+        const [res1, res2] = await Promise.all([
+            getUserList(),
+            getAnnouncementList()
+        ])
+        
+        if(res1.ActionType === "OK"){
+            userTotal.value = res1.total
+        } else {
+            console.log("获取用户总数失败")
+        }
+        
+        if(res2.ActionType === "OK"){
+            announcementTotal.value = res2.total  
+        } else {
+            console.log("获取公告总数失败")
+        }
+
+    } catch (error) {
+        console.error("请求异常:", error)
+    }
+}
+
+onMounted(()=>{
+   fetchData()
+})
 
 </script>
 <style scoped>

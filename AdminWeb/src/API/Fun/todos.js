@@ -1,36 +1,56 @@
-// import request from '@/utils/request'
+import axios  from "axios";
+export  async function getTodos(){
+    // 发送请求到后端，获取todo
+    try{
+        const response = await axios.get("/adminapi/todos/gettodos");
+        if(response.data.code===200) {
+            return response.data;
+        }else{
+            return null;
+        }
+    }catch(error){
+        console.log(error);
+    }
+}
 
+export async function postTodos (data){
+    // 发送请求到后端，添加todo
+    try{
+        const response = await axios.post("/adminapi/todos/addtodo",data);
+        if(response.data.code===200) {
+            return response.data;
+        }else{
+            return null;
+        }
+    }catch(error){
+        console.log(error);
+    }
 
-// // 获取待办事项列表
-// export function getTodos() {
-//   return request({
-//     url: '/todos',
-//     method: 'get'
-//   })
-// }
-
-// // 添加待办事项
-// export function addTodoApi(data) {
-//   return request({
-//     url: '/todos',
-//     method: 'post',
-//     data
-//   })
-// }
-
-// // 删除待办事项
-// export function deleteTodoApi(id) {
-//   return request({
-//     url: `/todos/${id}`,
-//     method: 'delete'
-//   })
-// }
-
-// // 切换待办事项状态
-// export function toggleTodoApi(id, data) {
-//   return request({
-//     url: `/todos/${id}`,
-//     method: 'patch',
-//     data
-//   })
-// }
+}
+export async function postDeleteTodos (_id){
+    // 发送请求到后端，删除todo
+    try{
+        const response = await axios.post("/adminapi/todos/deltodo",{_id});
+        if(response.data.code===200) {
+            return response.data;
+        }else{
+            return null;
+        }
+    }catch(error){
+        console.log(error);
+    }
+    
+}
+export async function postUpdateTodos (_id){
+    // 发送请求到后端，更新todo
+    try{
+        const response = await axios.post("/adminapi/todos/updatetodo",{_id});
+        if(response.data.code===200) {
+            return response.data;
+        }else{
+            return null;
+        }
+    }catch(error){
+        console.log(error);
+    }
+}

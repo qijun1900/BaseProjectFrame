@@ -1,19 +1,5 @@
 const NewsModel = require('../../models/NewsModel')
 const NewsService ={
-    // add: async ({tittle,content,category,isPublish,cover,editTime})=>{
-    //     return NewsModel.create({
-    //         tittle,
-    //         content,
-    //         category,
-    //         isPublish,
-    //         cover,
-    //         editTime
-    //     })
-    // },
-    // getlist:async ({_id})=>{
-    //     return _id?NewsModel.find({_id}):NewsModel.find({})
-        
-    // },
     publish:async ({_id,isPublish,editTime})=>{
         return NewsModel.updateOne({_id},{isPublish,editTime})
     },

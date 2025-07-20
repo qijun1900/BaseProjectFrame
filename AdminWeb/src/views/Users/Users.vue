@@ -241,7 +241,7 @@
     </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, defineAsyncComponent  } from 'vue'
 import { RefreshRight, Hide, Open,Check,Close } from '@element-plus/icons-vue'
 import Tooltip from '@/components/ReuseComponents/Tooltip.vue'
 import Pagination from '@/components/ReuseComponents/Pagination.vue'
@@ -255,6 +255,8 @@ import Popconfirm from '@/components/ReuseComponents/Popconfirm.vue'
 import SearchFilter from '@/components/FunComponents/SearchFilter.vue'
 import {getUserList,PostDeleteOneUser,PostDeleteManyUser} from '@/API/Users/userAPI'//API
 
+
+
 // 动态导入较大的组件
 const Dialog = defineAsyncComponent(() =>
     import('@/components/FunComponents/Dialog .vue')
@@ -262,7 +264,6 @@ const Dialog = defineAsyncComponent(() =>
 const Upload = defineAsyncComponent(() =>
     import('@/components/upload/Upload.vue')
 )
-
 //tableData数据
 const tableData = ref([]);
 // 对话框状态
@@ -440,7 +441,7 @@ const handleRefreshUserData = async () => {
             page: currentPage.value,
             size: pageSize.value,   
         },getUserList)
-        console.log(res)
+
         tableData.value = res.data.data//表格数据
         total.value = res.data.total//
     } catch (error) {

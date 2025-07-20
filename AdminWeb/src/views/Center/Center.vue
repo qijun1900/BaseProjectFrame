@@ -9,15 +9,15 @@
                 </el-card>
                 <el-card class="box-card-statistic">
                     <el-statistic  :value="50">
-                    <template #title>
-                        <div style="display: inline-flex; align-items: center">
-                            待完成任务
-                            <el-icon style="margin-left: 4px" :size="20">
-                                <List />
-                            </el-icon>
-                        </div>
-                    </template>
-                    <template #suffix>/100</template>
+                        <template #title>
+                            <div style="display: inline-flex; align-items: center">
+                                待完成任务
+                                <el-icon style="margin-left: 4px" :size="20">
+                                    <List/>
+                                </el-icon>
+                            </div>
+                        </template>
+                        <template #suffix>/100</template>
                     </el-statistic>
                 </el-card>
                 <!-- 新增待办事项组件 -->
